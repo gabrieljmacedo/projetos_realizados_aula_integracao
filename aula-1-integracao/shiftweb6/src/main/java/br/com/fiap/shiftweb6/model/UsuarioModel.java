@@ -108,6 +108,14 @@ public class UsuarioModel {
         this.idade = idade;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "UsuarioModel [idUsuario=" + idUsuario + ", cpf=" + cpf + ", nome=" + nome + ", email=" + email
+                + ", senha=" + senha + ", idade=" + idade + "]";
+    }
+
     public String getFoto() {
         return foto;
     }
@@ -117,11 +125,5 @@ public class UsuarioModel {
     }
 
 
-
-    @Override
-    public String toString() {
-        return "UsuarioModel [idUsuario=" + idUsuario + ", cpf=" + cpf + ", nome=" + nome + ", email=" + email
-                + ", senha=" + senha + ", idade=" + idade + "]";
-    }
 
 }
