@@ -3,8 +3,8 @@ package br.com.fiap.shiftweb6.controller;
 import java.net.URI;
 import java.util.List;
 
-import br.com.fiap.shiftweb6.model.mixin.ProdutosMixin;
-import br.com.fiap.shiftweb6.model.mixin.SkuMixin;
+import br.com.fiap.shiftweb6.model.ProdutoModel;
+import br.com.fiap.shiftweb6.model.mixin.LojasMixin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,42 +22,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.fiap.shiftweb6.model.CategoriaModel;
-import br.com.fiap.shiftweb6.model.ProdutoModel;
-import br.com.fiap.shiftweb6.repository.ProdutoRepository;
+import br.com.fiap.shiftweb6.model.LojaModel;
+import br.com.fiap.shiftweb6.repository.LojaRepository;
 
 @RestController
-@RequestMapping("/produto")
-public class ProdutoController {
+@RequestMapping("/loja")
+public class LojaController {
 
 
     @Autowired
-    ProdutoRepository produtoRepository;
+    LojaRepository lojaRepository;
 
 
     @GetMapping("/{id}")
     public ResponseEntity<JsonNode> findById(@PathVariable("id") Long id) throws JsonProcessingException {
-        ProdutoModel produtoModel = produtoRepository.findById(id).orElse(null);
+        LojaModel lojaModel = lojaRepository.findById(id).orElse(null);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.addMixIn(CategoriaModel.class, ProdutosMixin.class);
-        mapper.addMixIn(ProdutoModel.class, SkuMixin.class);
+        mapper.addMixIn(ProdutoModel.class, LojasMixin.class);
 
-        System.out.println(produtoModel.getNome());
-        System.out.println(produtoModel.getPreco());
-        System.out.println(produtoModel.getMarcaModel().getNomeMarca());
-
-        if ( null == produtoModel ) {
+        if ( null == lojaModel ) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(mapper.readTree(mapper.writeValueAsString(produtoModel)));  // Problema
+            return ResponseEntity.ok(mapper.readTree(mapper.writeValueAsString(lojaModel)));  // Problema
         }
 
     }
 
     @GetMapping()
-    public ResponseEntity<List<ProdutoModel>> findAll() {
-        List<ProdutoModel> lista = produtoRepository.findAll();
+    public ResponseEntity<List<LojaModel>> findAll() {
+        List<LojaModel> lista = lojaRepository.findAll();
 
         return ResponseEntity.ok( lista );	// Problema
     }
@@ -65,31 +59,31 @@ public class ProdutoController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin("*")
-    public ResponseEntity post(@RequestBody ProdutoModel produtoModel) {
+    public ResponseEntity post(@RequestBody LojaModel LojaModel) {
 
-        produtoRepository.save(produtoModel);
+        lojaRepository.save(LojaModel);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(produtoModel.getIdProduto()).toUri();
+                .buildAndExpand(LojaModel.getIdLoja()).toUri();
 
         return ResponseEntity.created(location).build();
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity put(@PathVariable("id") Long id,  @RequestBody ProdutoModel produtoModel) {
-        produtoModel.setIdProduto(id);
-        produtoRepository.save(produtoModel);
+    public ResponseEntity put(@PathVariable("id") Long id,  @RequestBody LojaModel lojaModel) {
+        lojaModel.setIdLoja(id);
+        lojaRepository.save(lojaModel);
         return ResponseEntity.noContent().build();
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
-        if ( produtoRepository.existsById(id) ) {
-            produtoRepository.deleteById(id);
+        if ( lojaRepository.existsById(id) ) {
+            lojaRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
